@@ -1,0 +1,28 @@
+[Unit]
+Description=etcd
+
+[Service]
+Type=notify
+ExecStart=/usr/bin/etcd \
+  --name NODENAME \
+  --cert-file=/etc/etcd/pki/NODENAME.pem \
+  --key-file=/etc/etcd/pki/NODENAME-key.pem \
+  --peer-cert-file=/etc/etcd/pki/NODENAME.pem \
+  --peer-key-file=/etc/etcd/pki/NODENAME-key.pem \
+  --trusted-ca-file=/etc/etcd/pki/ca.pem \
+  --peer-trusted-ca-file=/etc/etcd/pki/ca.pem \
+  --peer-client-cert-auth \
+  --client-cert-auth \
+  --initial-advertise-peer-urls https://NODEIP:2380 \
+  --listen-peer-urls https://NODEIP:2380 \
+  --advertise-client-urls https://NODEIP:2379 \
+  --listen-client-urls https://NODEIP:2379,https://127.0.0.1:2379 \
+  --initial-cluster-token etcd-cluster \
+  --initial-cluster "172-16-0-201=https://172.16.0.201:2380,172-16-0-202=https://172.16.0.202:2380,172-16-0-203=https://172.16.0.203:2380" \
+  --data-dir=/var/lib/etcd/default \
+  --initial-cluster-state new
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
